@@ -13,13 +13,20 @@ import GapTable6x6 from "./GapTable6x6";
 import SegmentedText from "./SegmentedText";
 import Image from "next/image";
 import ScrollCursor from "../ScrollCursor";
+import ServicesSection from "../ServicesSection";
+import ThirdSection from "../ThirdSection";
+import ProjectsSection from "../ProjectsSection";
+import ProcessSection from "../ProcessSection";
+import ContactSection from "../ContactSection";
+import Footer from "../Footer";
+import CompanyMarquee from "../CompanyMarquee";
+import ThreadsSection from "../ThreadsSection";
+import { useGridSize } from "./useGridSize";
+import LogoIcon from "../LogoIcon";
 
 type Origin = { r: number; c: number };
 type TrailCell = { key: string; t: number };
 
-const COLS = 6;
-const LAST = COLS - 1;
-const TOTAL = COLS * COLS;
 const STEP_MS = 80;
 const TRAIL_TTL_MS = 600;
 const TRAIL_MAX = 30;
@@ -27,16 +34,18 @@ const TRAIL_MAX = 30;
 const BASE_R = 6;
 const CORNER_R = 24;
 
-function getCornerRadius(r: number, c: number, expanded: boolean): string {
+function getCornerRadius(r: number, c: number, last: number, expanded: boolean): string {
   const tl = r === 0 && c === 0 ? CORNER_R : expanded ? 0 : BASE_R;
-  const tr = r === 0 && c === LAST ? CORNER_R : expanded ? 0 : BASE_R;
-  const bl = r === LAST && c === 0 ? CORNER_R : expanded ? 0 : BASE_R;
-  const br = r === LAST && c === LAST ? CORNER_R : expanded ? 0 : BASE_R;
+  const tr = r === 0 && c === last ? CORNER_R : expanded ? 0 : BASE_R;
+  const bl = r === last && c === 0 ? CORNER_R : expanded ? 0 : BASE_R;
+  const br = r === last && c === last ? CORNER_R : expanded ? 0 : BASE_R;
   return `${tl}px ${tr}px ${br}px ${bl}px`;
 }
 
 export default function GridWithOverlay() {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { cols: COLS, rows: ROWS_GRID, total: TOTAL } = useGridSize();
+  const LAST = COLS - 1;
   const [expanded, setExpanded] = useState(false);
   const [snapReady, setSnapReady] = useState(false);
   const [origin, setOrigin] = useState<Origin>({ r: 0, c: 0 });
@@ -55,8 +64,13 @@ export default function GridWithOverlay() {
   }, [trail]);
 
   const [pulses, setPulses] = useState<number[]>(() =>
-    Array.from({ length: TOTAL }, () => 0),
+    Array.from({ length: 36 }, () => 0),
   );
+
+  // Reset pulses when grid size changes
+  useEffect(() => {
+    setPulses(Array.from({ length: TOTAL }, () => 0));
+  }, [TOTAL]);
 
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
@@ -67,7 +81,7 @@ export default function GridWithOverlay() {
         r: Math.floor(i / COLS),
         c: i % COLS,
       })),
-    [],
+    [TOTAL, COLS],
   );
 
   const rippleDelay = (r: number, c: number): number => {
@@ -75,6 +89,18 @@ export default function GridWithOverlay() {
     const dc = c - origin.c;
     return Math.round(Math.sqrt(dr * dr + dc * dc) * STEP_MS);
   };
+
+  // Auto-expand on scroll down
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (!expanded && e.deltaY > 0) {
+        setOrigin({ r: Math.floor(ROWS_GRID / 2), c: Math.floor(COLS / 2) });
+        setExpanded(true);
+      }
+    };
+    window.addEventListener("wheel", handleWheel, { passive: true });
+    return () => window.removeEventListener("wheel", handleWheel);
+  }, [expanded, ROWS_GRID, COLS]);
 
   // Enable snap scroll after expand animation settles
   useEffect(() => {
@@ -120,11 +146,10 @@ export default function GridWithOverlay() {
     if (px < PADDING || px > totalW - PADDING) return null;
     if (py < PADDING || py > totalH - PADDING) return null;
 
-    // 6x6 grid area
     const gridW = totalW - PADDING * 2;
     const gridH = totalH - PADDING * 2;
-    const cardW = (gridW - GAP * 5) / COLS;
-    const cardH = (gridH - GAP * 5) / COLS;
+    const cardW = (gridW - GAP * (COLS - 1)) / COLS;
+    const cardH = (gridH - GAP * (COLS - 1)) / COLS;
 
     const stepW = cardW + GAP;
     const stepH = cardH + GAP;
@@ -139,7 +164,7 @@ export default function GridWithOverlay() {
     const inGapY = localY - r6 * stepH > cardH;
     if (inGapX || inGapY) return null;
 
-    if (c6 < 0 || c6 > 5 || r6 < 0 || r6 > 5) return null;
+    if (c6 < 0 || c6 >= COLS || r6 < 0 || r6 >= COLS) return null;
 
     return { r6, c6 };
   };
@@ -178,15 +203,29 @@ export default function GridWithOverlay() {
     [expanded],
   );
 
+  const collapseGrid = useCallback(() => {
+    const el = scrollRef.current;
+    if (el) el.scrollTo({ top: 0, behavior: "smooth" });
+    // Wait for scroll to reach top, then collapse
+    const wait = el && el.scrollTop > 0 ? 600 : 50;
+    setTimeout(() => {
+      setOrigin({ r: Math.floor(ROWS_GRID / 2), c: Math.floor(COLS / 2) });
+      setExpanded(false);
+    }, wait);
+  }, [ROWS_GRID, COLS]);
+
   const onClickExpandOverlay = useCallback(
     (row: number, col: number, numCols: number, cellSize: number) => {
-      if (expanded) return;
+      if (expanded) {
+        collapseGrid();
+        return;
+      }
       const card = mapToCard(row, col, cellSize);
       if (!card) return;
       setOrigin({ r: card.r6, c: card.c6 });
       setExpanded(true);
     },
-    [expanded],
+    [expanded, collapseGrid],
   );
 
   return (
@@ -194,24 +233,29 @@ export default function GridWithOverlay() {
       <ScrollCursor scrollContainerRef={scrollRef} />
       <div
         ref={scrollRef}
+        data-scroll-container
         className="w-screen"
         style={{
           height: "100vh",
           overflowY: expanded ? "scroll" : "hidden",
-          scrollSnapType: snapReady ? "y mandatory" : "none",
+          scrollSnapType: "none",
           scrollBehavior: "smooth",
         }}
       >
         <div
+          id="home"
           className="relative"
           style={{
             height: "100vh",
-            scrollSnapAlign: expanded ? "start" : undefined,
+            scrollSnapAlign: undefined,
+            backgroundColor: "#030301",
           }}
         >
           <div
-            className="relative z-[10] grid grid-cols-6 grid-rows-6 w-full h-full p-1.5"
+            className="relative z-[10] grid w-full h-full p-1.5"
             style={{
+              gridTemplateColumns: `repeat(${COLS}, 1fr)`,
+              gridTemplateRows: `repeat(${ROWS_GRID}, 1fr)`,
               gap: expanded ? 0 : "3px",
               transition: "gap 700ms ease-in-out",
             }}
@@ -225,15 +269,25 @@ export default function GridWithOverlay() {
                 expanded={expanded}
                 hovered={hoveredCard === i}
                 pulse={pulses[i]}
-                cornerRadius={getCornerRadius(r, c, expanded)}
+                cornerRadius={getCornerRadius(r, c, LAST, expanded)}
                 rippleDelayMs={expanded ? rippleDelay(r, c) : 0}
                 onExpandFromHere={() => {
                   setOrigin({ r, c });
                   setExpanded(true);
                 }}
                 front={
-                  <SegmentedText row={r} col={c}>
-                    <div className="flex flex-col">
+                  <SegmentedText row={r} col={c} cols={COLS} rows={ROWS_GRID}>
+                    <div className="relative flex flex-col justify-center items-center -mb-14">
+                      <LogoIcon
+                        className="absolute pointer-events-none select-none"
+                        style={{
+                          top: "-85%",
+                          right: "0",
+                          width: "clamp(600px, 100vw, 1000px)",
+                          height: "auto",
+                        }}
+                        opacity={0.1}
+                      />
                       <span
                         className="font-extrabold tracking-tight text-white"
                         style={{ fontSize: "clamp(56px, 14vw, 190px)" }}
@@ -253,8 +307,18 @@ export default function GridWithOverlay() {
                   </SegmentedText>
                 }
                 back={
-                  <SegmentedText row={r} col={c}>
-                    <div className="flex flex-col justify-center items-center -mb-14">
+                  <SegmentedText row={r} col={c} cols={COLS} rows={ROWS_GRID}>
+                    <div className="relative flex flex-col justify-center items-center -mb-14">
+                      <LogoIcon
+                        className="absolute pointer-events-none select-none"
+                        style={{
+                          top: "-85%",
+                          right: "0",
+                          width: "clamp(600px, 100vw, 1000px)",
+                          height: "auto",
+                        }}
+                        opacity={0.3}
+                      />
                       <span
                         className="font-extrabold tracking-tight text-white"
                         style={{ fontSize: "clamp(56px, 14vw, 190px)" }}
@@ -270,13 +334,6 @@ export default function GridWithOverlay() {
                       >
                         당신의 비전을 디자인하세요.
                       </span>
-                      <Image
-                        className="fill-white"
-                        src="/Capibara.svg"
-                        alt="Capibara"
-                        width={50}
-                        height={50}
-                      />
                     </div>
                   </SegmentedText>
                 }
@@ -284,7 +341,7 @@ export default function GridWithOverlay() {
             ))}
           </div>
 
-          {!expanded && <GapTable6x6 />}
+          {!expanded && <GapTable6x6 cols={COLS} />}
 
           <Overlay
             trail={trailMap}
@@ -295,12 +352,43 @@ export default function GridWithOverlay() {
           />
         </div>
 
+        {/* ── Company Marquee divider ── */}
+        {expanded && <CompanyMarquee />}
+
+        {/* ── Connected sections ── */}
         {expanded && (
-          <section
-            className="h-screen bg-[#030301]"
-            style={{ scrollSnapAlign: "start" }}
-          />
+          <div className="px-1.5" style={{ backgroundColor: "#030301" }}>
+            <div
+              className="w-full rounded-xl sm:rounded-2xl lg:rounded-3xl overflow-hidden relative"
+              style={{
+                backgroundColor: "#080F0F",
+                border: "1px solid rgba(255,255,255,0.06)",
+              }}
+            >
+              <ServicesSection connected />
+              <ThirdSection connected />
+              <ProjectsSection connected />
+              <ProcessSection connected />
+
+              {/* Tube ending — smooth rounded bottom */}
+              <div
+                className="w-full relative"
+                style={{ height: "80px", backgroundColor: "#080F0F" }}
+              >
+                <div
+                  className="absolute inset-x-0 bottom-0 h-full"
+                  style={{
+                    background: "linear-gradient(to bottom, #080F0F, #030301)",
+                    borderRadius: "0 0 24px 24px",
+                  }}
+                />
+              </div>
+            </div>
+          </div>
         )}
+        {expanded && <ThreadsSection />}
+        {expanded && <ContactSection />}
+        {expanded && <Footer />}
       </div>
     </>
   );

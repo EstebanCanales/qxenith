@@ -24,3 +24,36 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@keyframes logo-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes logo-color-cycle {
+  0%, 100% { fill: #06D6A0; }
+  20%       { fill: #FF6B6B; }
+  40%       { fill: #845EF7; }
+  60%       { fill: #FCC419; }
+  80%       { fill: #22B8CF; }
+}
+
+@keyframes footer-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes footer-spin-reverse {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes footer-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}

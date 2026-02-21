@@ -130,7 +130,7 @@ export default function FlipCard({
     <button
       type="button"
       onClick={() => {
-        if (!expanded) onExpandFromHere();
+        onExpandFromHere();
       }}
       onMouseEnter={triggerFlip}
       className="relative w-full h-full [perspective:500px] outline-none"
