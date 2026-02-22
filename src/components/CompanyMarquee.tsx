@@ -1,46 +1,78 @@
 "use client";
 
-import Image from "next/image";
+import {
+  siGoogle,
+  siFigma,
+  siGithub,
+  siLinear,
+  siStripe,
+  siNotion,
+  siVercel,
+  siFramer,
+  siSupabase,
+  siWebflow,
+  siAnthropic,
+  siRaycast,
+  siNetlify,
+  siMiro,
+  siPrisma,
+  siSentry,
+} from "simple-icons";
 import { COLORS } from "./color-bars/types";
 
 const COMPANIES = [
-  { name: "Samsung", logo: "/logos/companies/samsung.svg" },
-  { name: "Hyundai", logo: "/logos/companies/hyundai.svg" },
-  { name: "Naver",   logo: "/logos/companies/naver.svg" },
-  { name: "Kakao",   logo: "/logos/companies/kakao.svg" },
-  { name: "LG",      logo: "/logos/companies/lg.svg" },
-  { name: "Line",    logo: "/logos/companies/line.svg" },
-  { name: "Nexon",   logo: "/logos/companies/nexon.svg" },
+  siGoogle,
+  siFigma,
+  siGithub,
+  siLinear,
+  siStripe,
+  siNotion,
+  siVercel,
+  siFramer,
+  siSupabase,
+  siWebflow,
+  siAnthropic,
+  siRaycast,
+  siNetlify,
+  siMiro,
+  siPrisma,
+  siSentry,
 ];
 
 const ITEMS = [...COMPANIES, ...COMPANIES];
 
-function LogoItem({ name, logo, colorIdx }: { name: string; logo: string; colorIdx: number }) {
+function LogoItem({
+  icon,
+  colorIdx,
+}: {
+  icon: (typeof COMPANIES)[number];
+  colorIdx: number;
+}) {
   const c = COLORS[colorIdx % COLORS.length];
   return (
     <div
       className="shrink-0 flex items-center justify-center rounded-md sm:rounded-lg"
       style={{
-        width: "clamp(48px, 6vw, 80px)",
-        height: "clamp(48px, 6vw, 80px)",
+        width: "clamp(72px, 9vw, 110px)",
+        height: "clamp(72px, 9vw, 110px)",
         backgroundColor: `${c.color}0A`,
         border: `1px solid ${c.color}18`,
-        marginRight: "clamp(8px, 1.5vw, 16px)",
+        marginRight: "clamp(10px, 2vw, 20px)",
       }}
     >
-      <Image
-        src={logo}
-        alt={name}
-        width={24}
-        height={24}
-        className="select-none"
+      <svg
+        role="img"
+        aria-label={icon.title}
+        viewBox="0 0 24 24"
         style={{
-          width: "clamp(24px, 3vw, 42px)",
-          height: "clamp(24px, 3vw, 42px)",
-          filter: "brightness(0) invert(1)",
-          opacity: 0.4,
+          width: "clamp(36px, 4.5vw, 56px)",
+          height: "clamp(36px, 4.5vw, 56px)",
+          fill: "white",
+          opacity: 0.45,
         }}
-      />
+      >
+        <path d={icon.path} />
+      </svg>
     </div>
   );
 }
@@ -55,50 +87,36 @@ export default function CompanyMarquee() {
         backgroundColor: "#030301",
       }}
     >
-      {/* Fade edges */}
       <div
         className="absolute inset-y-0 left-0 z-10 pointer-events-none"
         style={{
-          width: "clamp(20px, 5vw, 60px)",
-          background: "linear-gradient(to right, #030301, transparent)",
+          width: "clamp(20px, 5vw, 80px)",
+          background: "linear-gradient(to right, #030301 30%, transparent)",
         }}
       />
       <div
         className="absolute inset-y-0 right-0 z-10 pointer-events-none"
         style={{
-          width: "clamp(20px, 5vw, 60px)",
-          background: "linear-gradient(to left, #030301, transparent)",
+          width: "clamp(20px, 5vw, 80px)",
+          background: "linear-gradient(to left, #030301 30%, transparent)",
         }}
       />
 
-      {/* Track */}
       <div
-        className="flex items-center whitespace-nowrap"
+        className="flex items-center"
         style={{
-          animation: "marquee-scroll 30s linear infinite",
           width: "max-content",
+          animation: "footer-marquee 35s linear infinite",
         }}
       >
-        {ITEMS.map((company, i) => (
+        {ITEMS.map((icon, i) => (
           <LogoItem
-            key={`${company.name}-${i}`}
-            name={company.name}
-            logo={company.logo}
-            colorIdx={i}
+            key={`${icon.title}-${i}`}
+            icon={icon}
+            colorIdx={i % COMPANIES.length}
           />
         ))}
       </div>
-
-      <style jsx>{`
-        @keyframes marquee-scroll {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-      `}</style>
     </div>
   );
 }

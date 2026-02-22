@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { geistSans, geistMono, nanumBrushScript } from "./fonts";
 import "./globals.css";
 import CircleMenu from "@/components/CircleMenu";
+import { Analytics } from "@vercel/analytics/next";
 
 const SITE_URL = "https://qxenith.com";
 
@@ -69,6 +70,7 @@ export default function RootLayout({
       >
         <CircleMenu />
         {children}
+        <Analytics />
       </body>
     </html>
   );
