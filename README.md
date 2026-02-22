@@ -29,7 +29,7 @@
 
 <div align="center">
 
-### What we do · 우리가 하는 일
+### What we do
 
 </div>
 
@@ -58,8 +58,6 @@
 <div align="center">
 
 **Let's build something together.**
-
-[qxenith.com](https://qxenith.com) · 디자인하세요.
 
 <br />
 
