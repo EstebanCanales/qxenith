@@ -4,33 +4,18 @@ import Image from "next/image";
 import { COLORS } from "./color-bars/types";
 
 const COMPANIES = [
-  { name: "Samsung", monogram: "S", logo: "/logos/companies/samsung.svg" },
-  { name: "Hyundai", monogram: "H", logo: "/logos/companies/hyundai.svg" },
-  { name: "Naver", monogram: "N", logo: "/logos/companies/naver.svg" },
-  { name: "Kakao", monogram: "K", logo: "/logos/companies/kakao.svg" },
-  { name: "LG", monogram: "LG", logo: "/logos/companies/lg.svg" },
-  { name: "SK Telecom", monogram: "SK", logo: null },
-  { name: "Coupang", monogram: "C", logo: null },
-  { name: "Line", monogram: "L", logo: "/logos/companies/line.svg" },
-  { name: "Toss", monogram: "T", logo: null },
-  { name: "Krafton", monogram: "Kr", logo: null },
-  { name: "Woowa", monogram: "W", logo: null },
-  { name: "Nexon", monogram: "Nx", logo: "/logos/companies/nexon.svg" },
+  { name: "Samsung", logo: "/logos/companies/samsung.svg" },
+  { name: "Hyundai", logo: "/logos/companies/hyundai.svg" },
+  { name: "Naver",   logo: "/logos/companies/naver.svg" },
+  { name: "Kakao",   logo: "/logos/companies/kakao.svg" },
+  { name: "LG",      logo: "/logos/companies/lg.svg" },
+  { name: "Line",    logo: "/logos/companies/line.svg" },
+  { name: "Nexon",   logo: "/logos/companies/nexon.svg" },
 ];
 
 const ITEMS = [...COMPANIES, ...COMPANIES];
 
-function LogoItem({
-  name,
-  monogram,
-  logo,
-  colorIdx,
-}: {
-  name: string;
-  monogram: string;
-  logo: string | null;
-  colorIdx: number;
-}) {
+function LogoItem({ name, logo, colorIdx }: { name: string; logo: string; colorIdx: number }) {
   const c = COLORS[colorIdx % COLORS.length];
   return (
     <div
@@ -43,32 +28,19 @@ function LogoItem({
         marginRight: "clamp(8px, 1.5vw, 16px)",
       }}
     >
-      {logo ? (
-        <Image
-          src={logo}
-          alt={name}
-          width={24}
-          height={24}
-          className="select-none"
-          style={{
-            width: "clamp(24px, 3vw, 42px)",
-            height: "clamp(24px, 3vw, 42px)",
-            filter: "brightness(0) invert(1)",
-            opacity: 0.4,
-          }}
-        />
-      ) : (
-        <span
-          className="font-extrabold tracking-tight"
-          style={{
-            fontSize: "clamp(16px, 2vw, 26px)",
-            color: c.color,
-            opacity: 0.5,
-          }}
-        >
-          {monogram}
-        </span>
-      )}
+      <Image
+        src={logo}
+        alt={name}
+        width={24}
+        height={24}
+        className="select-none"
+        style={{
+          width: "clamp(24px, 3vw, 42px)",
+          height: "clamp(24px, 3vw, 42px)",
+          filter: "brightness(0) invert(1)",
+          opacity: 0.4,
+        }}
+      />
     </div>
   );
 }
@@ -111,7 +83,6 @@ export default function CompanyMarquee() {
           <LogoItem
             key={`${company.name}-${i}`}
             name={company.name}
-            monogram={company.monogram}
             logo={company.logo}
             colorIdx={i}
           />

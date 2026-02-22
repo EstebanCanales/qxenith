@@ -21,26 +21,14 @@ export default function ThirdSection({ connected }: { connected?: boolean }) {
         boxShadow: connected ? "none" : "inset 0 0 80px rgba(0,0,0,0.6)",
       }}
     >
-        <div className="hidden sm:block">
-          <ZShapeBars
-            scale={1}
-            vLen1={50}
-            vLen2={450}
-            hGap={1110}
-            baseR={59}
-            reverseColors={false}
-          />
-        </div>
-        <div className="sm:hidden">
-          <ZShapeBars
-            scale={0.7}
-            vLen1={30}
-            vLen2={300}
-            hGap={400}
-            baseR={40}
-            reverseColors={false}
-          />
-        </div>
+        <ZShapeBars
+          className="absolute hidden sm:block"
+          scale={1}
+          vLen1={50}
+          vLen2={700}
+          baseR={59}
+          reverseColors={false}
+        />
 
         {/* Dot grid */}
         <div

@@ -11,7 +11,6 @@ import FlipCard from "./FlipCard";
 import Overlay from "./Overlay";
 import GapTable6x6 from "./GapTable6x6";
 import SegmentedText from "./SegmentedText";
-import Image from "next/image";
 import ScrollCursor from "../ScrollCursor";
 import ServicesSection from "../ServicesSection";
 import ThirdSection from "../ThirdSection";
@@ -22,8 +21,6 @@ import Footer from "../Footer";
 import CompanyMarquee from "../CompanyMarquee";
 import ThreadsSection from "../ThreadsSection";
 import { useGridSize } from "./useGridSize";
-import LogoIcon from "../LogoIcon";
-
 type Origin = { r: number; c: number };
 type TrailCell = { key: string; t: number };
 
@@ -278,15 +275,18 @@ export default function GridWithOverlay() {
                 front={
                   <SegmentedText row={r} col={c} cols={COLS} rows={ROWS_GRID}>
                     <div className="relative flex flex-col justify-center items-center -mb-14">
-                      <LogoIcon
+                      <img
+                        src="/logos/logo-white.svg"
+                        alt=""
+                        aria-hidden="true"
                         className="absolute pointer-events-none select-none"
                         style={{
                           top: "-85%",
                           right: "0",
                           width: "clamp(600px, 100vw, 1000px)",
                           height: "auto",
+                          opacity: 0.1,
                         }}
-                        opacity={0.1}
                       />
                       <span
                         className="font-extrabold tracking-tight text-white"
@@ -309,15 +309,18 @@ export default function GridWithOverlay() {
                 back={
                   <SegmentedText row={r} col={c} cols={COLS} rows={ROWS_GRID}>
                     <div className="relative flex flex-col justify-center items-center -mb-14">
-                      <LogoIcon
+                      <img
+                        src="/logos/logo-white.svg"
+                        alt=""
+                        aria-hidden="true"
                         className="absolute pointer-events-none select-none"
                         style={{
                           top: "-85%",
                           right: "0",
                           width: "clamp(600px, 100vw, 1000px)",
                           height: "auto",
+                          opacity: 0.3,
                         }}
-                        opacity={0.3}
                       />
                       <span
                         className="font-extrabold tracking-tight text-white"
