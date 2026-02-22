@@ -283,7 +283,7 @@ export default function GridWithOverlay() {
                         style={{
                           top: "-85%",
                           right: "0",
-                          width: "clamp(600px, 100vw, 1000px)",
+                          width: "min(80vw, 1000px)",
                           height: "auto",
                           opacity: 0.1,
                         }}
@@ -317,7 +317,7 @@ export default function GridWithOverlay() {
                         style={{
                           top: "-85%",
                           right: "0",
-                          width: "clamp(600px, 100vw, 1000px)",
+                          width: "min(80vw, 1000px)",
                           height: "auto",
                           opacity: 0.3,
                         }}

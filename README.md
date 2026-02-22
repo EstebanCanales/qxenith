@@ -18,6 +18,16 @@
 
 ---
 
+## Preview
+
+<div align="center">
+  <img src="src/promos/Qxenith-frist.jpg" alt="QXENITH — Hero Grid" width="100%" style="border-radius:12px;" />
+  <br /><br />
+  <img src="src/promos/qxenith-second.jpg" alt="QXENITH — Sections" width="100%" style="border-radius:12px;" />
+</div>
+
+---
+
 ## Overview
 
 QXENITH is a digital studio building web applications, interfaces, brands, and mobile experiences that don't just work — they feel alive. This repository contains the studio's main website: a fully interactive, motion-driven site that pushes the boundaries of what a web presence can be.

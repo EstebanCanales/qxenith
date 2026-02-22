@@ -18,11 +18,12 @@ export default function CardFace({
   return (
     <div
       className={[
-        "absolute inset-0 overflow-hidden [backface-visibility:hidden] pointer-events-none",
+        "absolute overflow-hidden [backface-visibility:hidden] pointer-events-none",
         isBack ? "[transform:rotateX(180deg)]" : "",
         bg,
       ].join(" ")}
       style={{
+        inset: "-0.5px",
         borderRadius: cornerRadius,
         transition: "border-radius 700ms ease-in-out",
       }}
